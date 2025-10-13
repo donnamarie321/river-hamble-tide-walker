@@ -1,0 +1,29 @@
+name: Weekly River Hamble Tide Walker
+
+on:
+  schedule:
+    - cron: '0 8 * * 0'  # Every Sunday at 8am UTC
+  workflow_dispatch: # Allows manual testing
+
+jobs:
+  send-tide-times:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        pip install requests beautifulsoup4
+        
+    - name: Run tide walker
+      env:
+        GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+        GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+      run: python tide_walker.py
