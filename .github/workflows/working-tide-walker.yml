@@ -1,6 +1,8 @@
 name: Working Tide Walker
 
 on:
+  schedule:
+    - cron: '0 8 * * 0'  # Every Sunday at 8am UTC
   workflow_dispatch:
 
 jobs:
