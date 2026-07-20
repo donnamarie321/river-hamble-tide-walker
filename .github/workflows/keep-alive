@@ -1,1 +1,32 @@
+name: Keep Alive
 
+# GitHub auto-disables scheduled workflows after 60 days of repo inactivity.
+# This workflow makes a small commit once a month so that never happens.
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'  # 06:00 UTC on the 1st of every month
+  workflow_dispatch:      # lets you trigger it manually too, just in case
+
+permissions:
+  contents: write
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Update timestamp file
+        run: |
+          mkdir -p .github
+          echo "Last keep-alive run: $(date -u)" > .github/keep-alive.txt
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/keep-alive.txt
+          git diff --staged --quiet || git commit -m "chore: keep-alive commit to prevent workflow auto-disable"
+          git push
