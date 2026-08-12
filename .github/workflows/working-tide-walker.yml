@@ -2,26 +2,28 @@ name: Working Tide Walker
 
 on:
   schedule:
-    - cron: '0 8 * * 0'  # Every Sunday at 8am UTC
+    - cron: '0 8 * * 0'
+      timezone: "Europe/London"
   workflow_dispatch:
 
 jobs:
   send-tides:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v5
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-        
-    - name: Install dependencies
-      run: pip install requests beautifulsoup4
-        
-    - name: Run tide walker
-      env:
-        GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
-        GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-        RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
-      run: python tide_walker.py
+      - uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run tide walker
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+        run: python tide_walker.py
